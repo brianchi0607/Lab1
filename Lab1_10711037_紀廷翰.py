@@ -70,7 +70,7 @@ def show_CM(validation,prediction):
     plt.figure(figsize = (6,4))
     sns.heatmap(matrix,cmap = 'coolwarm',linecolor= 'white',
                 linewidths= 1,annot= True,fmt = 'd')
-    plt.title(' ResNet18 ')
+    plt.title(' ResNet50 ')
     plt.ylabel('True')
     plt.xlabel('Prediction')
     plt.plot()
@@ -273,21 +273,21 @@ if __name__=="__main__":
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend(["Accuracy_train"],loc = 'upper right')
-    plt.title(' ResNet18 ')
+    plt.title(' ResNet50 ')
     plt.show()  
     
     plt.plot(test_acc, label = 'test_acc')
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend(["Accuracy_test"],loc = 'upper right')
-    plt.title(' ResNet18 ')
+    plt.title(' ResNet50 ')
     plt.show()  
     
     plt.plot(test_F1_score, label = 'test_F1_score')
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend(["test_F1_score"],loc = 'upper right')
-    plt.title(' ResNet18 ')
+    plt.title(' ResNet50 ')
     plt.show()  
     
     show_CM(test_gt, test_preds)
