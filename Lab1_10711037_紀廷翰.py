@@ -62,8 +62,7 @@ def images_transforms(phase):
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])
         ])
-        
-    
+      
     return data_transformation
 #%%
 def show_CM(validation,prediction):
@@ -84,21 +83,6 @@ def imshow(img):
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
     plt.show()
 
-# class ResNet(nn.Module):
-#    def __init__(self,num_class,pretrained_option=False):
-#         super(ResNet,self).__init__()
-#         self.model=models.resnet18(pretrained=pretrained_option)
-        
-#         if pretrained_option==True:
-#             for param in self.model.parameters():
-#                 param.requires_grad=False
-
-#         num_neurons=self.model.fc.in_features
-#         self.model.fc=nn.Linear(num_neurons,num_class)
-        
-#    def forward(self,X):
-#         out=self.model(X)
-#         return out
 #%%
 class focal_loss(nn.Module):
     def __init__(self, alpha=0.25, gamma=2, num_classes =2, size_average=True):
@@ -177,7 +161,7 @@ def training(model, train_loader, test_loader, Loss, optimizer, epochs, device, 
             print ("Train_acc : " , correct)
             train_loss.append(np.mean(total_loss))
             
-        # scheduler.step()
+        scheduler.step()
         accuracy, Recall, Precision, F1_score, test_gt, test_preds = evaluate(model, device, test_loader)
         
         train_acc.append(correct)  
@@ -185,11 +169,7 @@ def training(model, train_loader, test_loader, Loss, optimizer, epochs, device, 
         test_Recall.append(Recall)
         test_Precision.append(Precision)
         test_F1_score.append(F1_score)
-        
-        if((epoch+1) % 6 == 0):
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = param_group['lr']/2
-
+       
         if accuracy > best_evaluated_acc:
             best_evaluated_acc = accuracy
             best_model_wts = copy.deepcopy(model.state_dict())
@@ -257,8 +237,8 @@ if __name__=="__main__":
     epochs=30
     num_classes=2
 
-    train_path= r'C:/Users/za951/Downloads/archive/chest_xray/train'
-    test_path= r'C:/Users/za951/Downloads/archive/chest_xray/test'
+    train_path= r'archive/chest_xray/train'
+    test_path= r'archive/chest_xray/test'
 
     trainset=datasets.ImageFolder(train_path,transform=images_transforms('train'))
     testset=datasets.ImageFolder(test_path,transform=images_transforms('test'))
@@ -269,18 +249,16 @@ if __name__=="__main__":
     examples=iter(train_loader)
     images,labels=examples.next()
     print(images.shape)
-    # imshow(torchvision.utils.make_grid(images[:56],pad_value=20))
+    imshow(torchvision.utils.make_grid(images[:56],pad_value=20))
 
     model = torchvision.models.resnet50(pretrained=True)
-    print(model)
+    
     for param in model.parameters():
         param.requires_grad = False
     model.fc = nn.Linear(2048, 2)
     criterion = focal_loss().to(device)
     optimizer = torch.optim.AdamW(model.fc.parameters(), lr=learning_rate)
-
-    # print (summary(model,(3,128,128)))
-
+    
     print (train_loader)
     dataiter = iter(train_loader)
     images , labels = dataiter.next()
